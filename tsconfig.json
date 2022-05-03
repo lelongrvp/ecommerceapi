@@ -6,6 +6,6 @@
       "lib": ["esnext"],
       "esModuleInterop": true
     },
-    "include": ["./routes/*"],
+    "include": ["./routes/*", "./services/*", "./interfaces/*"],
     "exclude": ["node_modules/*"]
 }
