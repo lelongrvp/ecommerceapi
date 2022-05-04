@@ -36,7 +36,7 @@ model Product {
 
 model Category {
   id        Int      @id @default(autoincrement())
-  type      String?
+  type      String   @unique
   Product   Product? @relation(fields: [productId], references: [id])
   productId Int?
 }
