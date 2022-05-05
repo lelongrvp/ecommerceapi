@@ -1,5 +1,5 @@
-import { IUser } from './../interfaces/IUser';
-import { prisma } from "./initPrismaClient";
+import { IUser } from '../interfaces/IUser';
+import { prisma } from "./InitPrismaClient";
 
 export const getUserById = async (id: number) => {
     return prisma.user.findUnique({

@@ -1,5 +1,6 @@
 import { IProduct } from "../interfaces/IProduct";
-import { prisma } from "./initPrismaClient";
+import { DuplicateException } from "./DuplicateException";
+import { prisma } from "./InitPrismaClient";
 
 export const getProductById = async (id: number) => {
     return prisma.product.findUnique({
@@ -42,6 +43,11 @@ export const searchProductByTitle = async (searchKey: string) => {
 }
 
 export const createProduct = async (product: IProduct) => {
+    const dbProduct = await getProductByTitle(product.title);
+    if (dbProduct?.title === product.title) {
+        throw DuplicateException("Duplicate product title")
+    }
+
     return prisma.product.create({
         data: {
             title: product.title,
@@ -58,6 +64,10 @@ export const createProduct = async (product: IProduct) => {
 export const updateProduct = async (oldProduct: IProduct, newProduct: IProduct) => {
     const dbProduct = await getProductById(oldProduct.id);
     if (dbProduct) {
+        if (dbProduct.title === newProduct.title) {
+            throw DuplicateException("Duplicate product title")
+        }
+
         const updatedProduct = {
             ...dbProduct,
             title: newProduct.title ? newProduct.title : dbProduct.title,

@@ -1,4 +1,4 @@
-import { getUserByUsername, createUser, updateUser, getUserByEmail } from './services/user';
+import { getUserByUsername, createUser, updateUser, getUserByEmail } from './services/User';
 import { options } from './swaggerOptions';
 const express = require("express");
 const app = express();

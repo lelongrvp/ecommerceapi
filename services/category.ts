@@ -1,5 +1,6 @@
-import { ICategory } from './../interfaces/ICategory';
-import { prisma } from './initPrismaClient';
+import { ICategory } from '../interfaces/ICategory';
+import { DuplicateException } from './DuplicateException';
+import { prisma } from './InitPrismaClient';
 
 export const getCategory = async (category: ICategory) => {
 	return prisma.category.findUnique({
@@ -12,6 +13,11 @@ export const getCategories = async () => {
 }
 
 export const createCategory = async (category: ICategory) => {
+	const dbCategory = await getCategory(category);
+	if (dbCategory?.type === category.type) {
+		throw DuplicateException("Duplicate category");
+	}
+
 	return prisma.category.create({
 		data: {
 			type: category.type
@@ -22,8 +28,8 @@ export const createCategory = async (category: ICategory) => {
 export const updateCategory = async (oldCategory: ICategory, newCategory: ICategory) => {
 	const dbCategory = await getCategory(oldCategory);
 	if (dbCategory) {
-		if(dbCategory.type === newCategory.type){
-			return null;
+		if (dbCategory.type === newCategory.type) {
+			throw DuplicateException("Duplicate category");
 		}
 
 		return prisma.category.update({
