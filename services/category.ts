@@ -22,6 +22,10 @@ export const createCategory = async (category: ICategory) => {
 export const updateCategory = async (oldCategory: ICategory, newCategory: ICategory) => {
 	const dbCategory = await getCategory(oldCategory);
 	if (dbCategory) {
+		if(dbCategory.type === newCategory.type){
+			return null;
+		}
+
 		return prisma.category.update({
 			where: {
 				id: dbCategory.id

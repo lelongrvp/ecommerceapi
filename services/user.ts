@@ -59,11 +59,11 @@ export const updateUser = async (user: IUser) => {
 }
 
 export const deleteUser = async (user: IUser) => {
-    const dbUser = await getUserByUsername(user.username);
+    const dbUser = await getUserById(user.id);
     if (dbUser) {
         return prisma.user.delete({
             where: {
-                username: user.username
+                id: user.id
             }
         })
     }

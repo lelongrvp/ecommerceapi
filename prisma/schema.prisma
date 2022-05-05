@@ -45,9 +45,10 @@ model Order {
   id        Int         @id @default(autoincrement())
   status    OrderStatus @default(NEW)
   createdAt DateTime    @default(now())
+  updateAt  DateTime    @updatedAt
   orderItem OrderItem[]
-  User      User?       @relation(fields: [userId], references: [id])
-  userId    Int?
+  User      User        @relation(fields: [userId], references: [id])
+  userId    Int
 }
 
 model OrderItem {

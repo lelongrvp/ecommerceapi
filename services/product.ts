@@ -1,16 +1,17 @@
-import { ICategory } from './../interfaces/ICategory';
 import { IProduct } from "../interfaces/IProduct";
 import { prisma } from "./initPrismaClient";
 
 export const getProductById = async (id: number) => {
     return prisma.product.findUnique({
-        where: { id: id }
+        where: { id: id },
+        include: { category: true }
     })
 }
 
 export const getProductByTitle = async (title: string) => {
     return prisma.product.findUnique({
-        where: { title: title }
+        where: { title: title },
+        include: { category: true }
     })
 }
 
@@ -21,7 +22,8 @@ export const getProductLikeTitle = async (title: string) => {
                 contains: title,
                 mode: 'insensitive'
             }
-        }
+        },
+        include: { category: true }
     })
 }
 
@@ -61,7 +63,8 @@ export const updateProduct = async (oldProduct: IProduct, newProduct: IProduct) 
             title: newProduct.title ? newProduct.title : dbProduct.title,
             description: newProduct.description ? newProduct.description : dbProduct.description,
             imgUrl: newProduct.imgUrl ? newProduct.imgUrl : dbProduct.imgUrl,
-            price: newProduct.price ? newProduct.price : dbProduct.price,            
+            price: newProduct.price ? newProduct.price : dbProduct.price,
+            category: newProduct.category ? newProduct.category : dbProduct.category
         }
         return prisma.product.update({
             where: {
@@ -71,8 +74,26 @@ export const updateProduct = async (oldProduct: IProduct, newProduct: IProduct) 
                 title: updatedProduct.title,
                 description: updatedProduct.description,
                 imgUrl: updatedProduct.imgUrl,
-                price: updatedProduct.price,  
+                price: updatedProduct.price,
+                category: {
+                    connect: updatedProduct.category?.map(item => ({ type: item.type }))
+                }
             }
         })
     }
+
+    return null;
+}
+
+export const deleteProduct = async (product: IProduct) => {
+    const dbProduct = await getProductById(product.id);
+    if (dbProduct) {
+        return prisma.product.delete({
+            where: {
+                id: product.id
+            }
+        })
+    }
+
+    return null;
 }
