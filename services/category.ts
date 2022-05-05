@@ -11,7 +11,6 @@ export const getCategories = async () => {
 	return prisma.category.findMany()
 }
 
-
 export const createCategory = async (category: ICategory) => {
 	return prisma.category.create({
 		data: {
@@ -20,15 +19,31 @@ export const createCategory = async (category: ICategory) => {
 	})
 }
 
+export const updateCategory = async (oldCategory: ICategory, newCategory: ICategory) => {
+	const dbCategory = await getCategory(oldCategory);
+	if (dbCategory) {
+		return prisma.category.update({
+			where: {
+				id: dbCategory.id
+			},
+			data: {
+				type: newCategory.type
+			}
+		})
+	}
+
+	return null;
+}
+
 export const deleteCategory = async (category: ICategory) => {
 	const dbCategory = await getCategory(category);
-    if (dbCategory) {
-        return prisma.user.delete({
-            where: {
-                type: category.type
-            }
-        })
-    }
+	if (dbCategory) {
+		return prisma.category.delete({
+			where: {
+				type: category.type
+			}
+		})
+	}
 
-    return null;
+	return null;
 }

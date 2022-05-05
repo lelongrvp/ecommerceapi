@@ -20,6 +20,8 @@
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.15",
     "prisma": "^3.13.0",
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.3.0",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
   }

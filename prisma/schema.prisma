@@ -28,7 +28,7 @@ model Product {
   updateAt    DateTime    @updatedAt
   title       String      @unique
   description String      @default("Product description")
-  imgUrl      String
+  imgUrl      String      @default("https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
   price       Decimal     @default(0)
   category    Category[]
   OrderItem   OrderItem[]
