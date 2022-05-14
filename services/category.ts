@@ -1,5 +1,5 @@
 import { ICategory } from '../interfaces/ICategory';
-import { DuplicateException } from './DuplicateException';
+import { DuplicateException } from '../exceptions/DuplicateException';
 import { prisma } from './InitPrismaClient';
 
 export const getCategory = async (category: ICategory) => {

@@ -1,5 +1,5 @@
 import { IProduct } from "../interfaces/IProduct";
-import { DuplicateException } from "./DuplicateException";
+import { DuplicateException } from "../exceptions/DuplicateException";
 import { prisma } from "./InitPrismaClient";
 
 export const getProductById = async (id: number) => {
@@ -61,24 +61,36 @@ export const createProduct = async (product: IProduct) => {
     })
 }
 
-export const updateProduct = async (oldProduct: IProduct, newProduct: IProduct) => {
-    const dbProduct = await getProductById(oldProduct.id);
+export const updateProduct = async (product: IProduct) => {
+    const dbProduct = await getProductById(product.id);
     if (dbProduct) {
-        if (dbProduct.title === newProduct.title) {
+        if (dbProduct.title === product.title) {
             throw DuplicateException("Duplicate product title")
         }
 
-        const updatedProduct = {
+        const updatedProduct: IProduct = {
             ...dbProduct,
-            title: newProduct.title ? newProduct.title : dbProduct.title,
-            description: newProduct.description ? newProduct.description : dbProduct.description,
-            imgUrl: newProduct.imgUrl ? newProduct.imgUrl : dbProduct.imgUrl,
-            price: newProduct.price ? newProduct.price : dbProduct.price,
-            category: newProduct.category ? newProduct.category : dbProduct.category
+            title: product.title ? product.title : dbProduct.title,
+            description: product.description ? product.description : dbProduct.description,
+            imgUrl: product.imgUrl ? product.imgUrl : dbProduct.imgUrl,
+            price: product.price ? product.price : dbProduct.price.toNumber(),
+            category: product.category ? product.category : dbProduct.category
         }
+        //disconect all connection to other table
+        await prisma.product.update({
+            where: {
+                id: dbProduct.id,
+            },
+            data: {
+                category: {
+                    set: []
+                }
+            }
+        })
+
         return prisma.product.update({
             where: {
-                id: oldProduct.id
+                id: dbProduct.id
             },
             data: {
                 title: updatedProduct.title,
@@ -95,12 +107,12 @@ export const updateProduct = async (oldProduct: IProduct, newProduct: IProduct) 
     return null;
 }
 
-export const deleteProduct = async (product: IProduct) => {
-    const dbProduct = await getProductById(product.id);
+export const deleteProduct = async (productId: number) => {
+    const dbProduct = await getProductById(productId);
     if (dbProduct) {
         return prisma.product.delete({
             where: {
-                id: product.id
+                id: productId
             }
         })
     }

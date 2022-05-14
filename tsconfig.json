@@ -8,6 +8,6 @@
       "lib": ["esnext"],
       "esModuleInterop": true
     },
-    "include": ["./routes/*", "./services/*", "./interfaces/*"],
+    "include": ["./routes/*", "./services/*", "./interfaces/*", "exceptions/DuplicateException.ts"],
     "exclude": ["node_modules/*"]
 }

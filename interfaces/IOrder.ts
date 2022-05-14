@@ -4,8 +4,8 @@ import { IOrderItem } from './IOrderItem';
 export interface IOrder {
     id: number,
     status: OrderStatus,
-    orderItem: IOrderItem[],
-    user: IUser
+    orderItem?: IOrderItem[],
+    user?: IUser
 }
 
 export enum OrderStatus {
