@@ -5,7 +5,6 @@
 - PostgreSQL 14
 
 ## Installation
-- Create a new Postgre DB name as : **"ecommercedb"** with username **postgres** and password **admin**
 - Run ``yarn install`` inside root directory
   
 ## Run script

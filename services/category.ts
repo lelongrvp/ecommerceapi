@@ -2,9 +2,9 @@ import { ICategory } from '../interfaces/ICategory';
 import { DuplicateException } from '../exceptions/DuplicateException';
 import { prisma } from './InitPrismaClient';
 
-export const getCategory = async (category: ICategory) => {
+export const getCategory = async (categoryId: number) => {
 	return prisma.category.findUnique({
-		where: { type: category.type }
+		where: { id: categoryId }
 	})
 }
 
@@ -13,7 +13,7 @@ export const getCategories = async () => {
 }
 
 export const createCategory = async (category: ICategory) => {
-	const dbCategory = await getCategory(category);
+	const dbCategory = await getCategory(category.id);
 	if (dbCategory?.type === category.type) {
 		throw DuplicateException("Duplicate category");
 	}
@@ -25,10 +25,10 @@ export const createCategory = async (category: ICategory) => {
 	})
 }
 
-export const updateCategory = async (oldCategory: ICategory, newCategory: ICategory) => {
-	const dbCategory = await getCategory(oldCategory);
+export const updateCategory = async (category: ICategory) => {
+	const dbCategory = await getCategory(category.id);
 	if (dbCategory) {
-		if (dbCategory.type === newCategory.type) {
+		if (dbCategory.type === category.type) {
 			throw DuplicateException("Duplicate category");
 		}
 
@@ -37,7 +37,7 @@ export const updateCategory = async (oldCategory: ICategory, newCategory: ICateg
 				id: dbCategory.id
 			},
 			data: {
-				type: newCategory.type
+				type: category.type
 			}
 		})
 	}
@@ -45,12 +45,12 @@ export const updateCategory = async (oldCategory: ICategory, newCategory: ICateg
 	return null;
 }
 
-export const deleteCategory = async (category: ICategory) => {
-	const dbCategory = await getCategory(category);
+export const deleteCategory = async (categoryId: number) => {
+	const dbCategory = await getCategory(categoryId);
 	if (dbCategory) {
 		return prisma.category.delete({
 			where: {
-				type: category.type
+				id: categoryId
 			}
 		})
 	}

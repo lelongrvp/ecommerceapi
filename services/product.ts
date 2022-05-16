@@ -2,6 +2,13 @@ import { IProduct } from "../interfaces/IProduct";
 import { DuplicateException } from "../exceptions/DuplicateException";
 import { prisma } from "./InitPrismaClient";
 
+export const getProducts = async (page: number = 0, pageSize: number = 10) => {
+    return prisma.product.findMany({
+        skip: page * pageSize,
+        take: pageSize,
+    })
+}
+
 export const getProductById = async (id: number) => {
     return prisma.product.findUnique({
         where: { id: id },
@@ -16,8 +23,10 @@ export const getProductByTitle = async (title: string) => {
     })
 }
 
-export const getProductLikeTitle = async (title: string) => {
+export const getProductLikeTitle = async (title: string, page: number = 0, pageSize: number = 10) => {
     return prisma.product.findMany({
+        skip: page * pageSize,
+        take: pageSize,
         where: {
             title: {
                 contains: title,

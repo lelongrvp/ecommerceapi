@@ -1,4 +1,3 @@
-import { IUser } from './../interfaces/IUser';
 import { getUsers, getUserById, getUserByUsername, getUserByEmail, updateUser, deleteUser } from './../services/user';
 const router = require("express").Router();
 import { authenticateAdmin } from './../server';
