@@ -24,6 +24,13 @@ export const getUserByUsername = async (username: string) => {
     })
 }
 
+export const getUserByUsernameWithToken = async (username: string) => {
+    return prisma.user.findUnique({
+        where: { username: username },
+    })
+}
+
+
 export const getUserByEmail = async (email: string) => {
     return prisma.user.findUnique({
         where: { email: email },
@@ -58,7 +65,7 @@ export const createUser = async (user: IUser) => {
     });
 }
 
-export const updateUser = async (user: IUser) => {
+export const updateUser = async (user: any) => {
     const dbUser = await getUserByIdWithToken(user.id);
     if (dbUser) {
         const updatedUser = {

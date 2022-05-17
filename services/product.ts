@@ -6,6 +6,10 @@ export const getProducts = async (page: number = 0, pageSize: number = 10) => {
     return prisma.product.findMany({
         skip: page * pageSize,
         take: pageSize,
+        include: { 
+            category: true,
+            _count: true
+        }
     })
 }
 
@@ -23,7 +27,7 @@ export const getProductByTitle = async (title: string) => {
     })
 }
 
-export const getProductLikeTitle = async (title: string, page: number = 0, pageSize: number = 10) => {
+export const getProductsLikeTitle = async (title: string, page: number = 0, pageSize: number = 10) => {
     return prisma.product.findMany({
         skip: page * pageSize,
         take: pageSize,
@@ -33,7 +37,10 @@ export const getProductLikeTitle = async (title: string, page: number = 0, pageS
                 mode: 'insensitive'
             }
         },
-        include: { category: true }
+        include: { 
+            category: true,
+            _count: true
+        }
     })
 }
 

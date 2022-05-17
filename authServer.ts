@@ -1,4 +1,4 @@
-import { getUserByUsername, createUser, updateUser, getUserByEmail } from './services/User';
+import { getUserByUsername, getUserByUsernameWithToken, createUser, updateUser, getUserByEmail } from './services/User';
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -15,7 +15,7 @@ app.post('/auth/token', async (req, res) => {
 	const [accessToken] = req.body;
 	const [username] = jwt.decode(accessToken).payload;
 
-	const dbUser = await getUserByUsername(username);
+	const dbUser = await getUserByUsernameWithToken(username);
 
 	jwt.verify(dbUser.refreshToken, process.env.REQUEST_TOKEN_SECRET, (err, _) => {
 		if (err) return res.status(403).send({ message: "Unauthorized token" });
@@ -69,14 +69,14 @@ app.get("/auth/signup", async (req, res) => {
 	})
 })
 
-function generateAccessToken(user) {
+function generateAccessToken(user): string {
 	return jwt.sign({
 		user: user.username,
 		isAdmin: user.isAdmin
 	}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30m" })
 }
 
-function generateRefreshToken(user) {
+function generateRefreshToken(user): string {
 	return jwt.sign({
 		username: user.username,
 		isAdmin: user.isAdmin
