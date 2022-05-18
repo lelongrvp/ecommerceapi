@@ -43,14 +43,22 @@ router.put("", async (req: any, res: any) => {
     const [user] = req.body;
 
     const result = await updateUser(user);
-    return res.status(200).send(result);
+    if (result) {
+        return res.status(200).send(result);
+    }
+
+    return res.status(404).send();
 });
 
 router.delete("", authenticateAdmin, async (req: any, res: any) => {
     const [id] = req.query;
 
     const result = await deleteUser(id);
-    return res.status(200).send(result);
+    if (result) {
+        return res.status(200).send(result);
+    }
+
+    return res.status(404).send();
 })
 
 export = router;

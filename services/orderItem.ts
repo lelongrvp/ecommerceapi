@@ -14,7 +14,7 @@ export const getOrderItemsByOrder = async (order: Order) => {
     })
 }
 
-export const createOrderItem = async (orderItem: IOrderItem) => {
+export const createOrderItem = async (orderItem: IOrderItem, orderId: number) => {
     return prisma.orderItem.create({
         data: {
             product: {
@@ -24,7 +24,7 @@ export const createOrderItem = async (orderItem: IOrderItem) => {
             },
             Order: {
                 connect: {
-                    id: orderItem.order.id
+                    id: orderId
                 }
             },
             quantity: orderItem.quantity
@@ -32,7 +32,7 @@ export const createOrderItem = async (orderItem: IOrderItem) => {
     })
 }
 
-export const updateOrderItem = async (orderItem: IOrderItem) => {
+export const updateOrderItem = async (orderItem: IOrderItem, orderId: number) => {
     const dbOrderItem = await getOrderItemById(orderItem.id);
 
     if (dbOrderItem) {
@@ -41,28 +41,17 @@ export const updateOrderItem = async (orderItem: IOrderItem) => {
             quantity: orderItem.quantity? orderItem.quantity : dbOrderItem.quantity
         }
 
-        if(dbOrderItem.productId !== orderItem.id){
-            await prisma.product.update({
-                where: {
-                    id: dbOrderItem.productId
-                },
-                data: {
-                    OrderItem: {
-                        disconnect: [{id: orderItem.id}]
-                    }
-                }
-            })
-        }
-
         return prisma.orderItem.update({
             where: {
                 id: dbOrderItem.id
             },
             data: {
-                quantity: orderItem.quantity
+                quantity: updatedOrderItem.quantity
             }
         })
     }
+
+    return createOrderItem(orderItem, orderId);
 }
 
 export const deleteOrderItem = async (orderItemId: number) => {

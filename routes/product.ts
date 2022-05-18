@@ -6,7 +6,11 @@ router.get("/all", async (req: any, res: any) => {
     const [page, pageSize] = req.query;
 
     const products = await getProducts(page, pageSize);
-    return res.status(200).send(products);
+    if (products) {
+        return res.status(200).send(products);
+    }
+
+    return res.status(404).send();
 })
 
 //TODO: getBy, search, create, update, delete
@@ -14,14 +18,22 @@ router.get("", async (req: any, res: any) => {
     const [id] = req.query;
 
     const product = await getProductById(id);
-    return res.status(200).send(product);
+    if (product) {
+        return res.status(200).send(product);
+    }
+
+    return res.status(404).send();
 })
 
 router.get("", async (req: any, res: any) => {
     const [title, page, pageSize] = req.query;
 
     const products = await getProductsLikeTitle(title);
-    return res.status(200).send(products);
+    if (products) {
+        return res.status(200).send(products);
+    }
+
+    return res.status(404).send();
 })
 
 router.get("", async (req: any, res: any) => {
@@ -58,4 +70,5 @@ router.delete("", authenticateAdmin, async (req: any, res: any) => {
 
     const deletedProduct = await deleteProduct(id);
     return res.status(200).send(deletedProduct);
+    return res.status(404).send();
 })

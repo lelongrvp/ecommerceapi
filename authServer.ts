@@ -71,14 +71,20 @@ app.get("/auth/signup", async (req, res) => {
 
 function generateAccessToken(user): string {
 	return jwt.sign({
-		user: user.username,
+		user: {
+			id: user.id,
+			username: user.username
+		},
 		isAdmin: user.isAdmin
 	}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30m" })
 }
 
 function generateRefreshToken(user): string {
 	return jwt.sign({
-		username: user.username,
+		user: {
+			id: user.id,
+			username: user.username
+		},
 		isAdmin: user.isAdmin
 	}, process.env.REQUEST_TOKEN_SECRET, { expiresIn: "7d" })
 }

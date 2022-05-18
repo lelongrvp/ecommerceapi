@@ -1,29 +1,39 @@
 import { IOrder, OrderStatus } from "../interfaces/IOrder";
+import { IUser } from "../interfaces/IUser";
 import { prisma } from "./InitPrismaClient";
-import { getOrderItemsByOrder } from "./orderItem";
-var deepEqual = require('deep-equal')
 
 export const getOrderById = async (id: number) => {
     return prisma.order.findUnique({
-        where: { id: id }
+        where: { id: id },
+        include: {
+            orderItem: true
+        }
     })
 }
 
-export const getOrdersByUser = async (userId: number, page: number = 0, 
-                                    pageSize: number = 10) => {
+export const getOrdersByUser = async (user: IUser, page: number = 0,
+    pageSize: number = 10) => {
     return prisma.order.findMany({
         skip: page * pageSize,
         take: pageSize,
-        where: { userId: userId }
+        where: { userId: user.id },
+        include: {
+            orderItem: true,
+            _count: true
+        }
     })
 }
 
 export const getOrdersByStatus = async (orderStatus: OrderStatus, page: number = 0,
-                                        pageSize: number = 10) => {
+    pageSize: number = 10) => {
     return prisma.order.findMany({
         skip: page * pageSize,
         take: pageSize,
-        where: { status: orderStatus }
+        where: { status: orderStatus },
+        include: {
+            orderItem: true,
+            _count: true
+        }
     })
 }
 
@@ -31,22 +41,22 @@ export const createOrder = async (order: IOrder) => {
     return prisma.order.create({
         data: {
             User: {
-                connect: order.user
+                connect: {
+                    id: order.user?.id
+                }
             }
         }
     })
 }
 
-export const updateOrder = async (oldOrder: IOrder, newOrder: IOrder) => {
-    const dbOrder = await getOrderById(oldOrder.id);
-    if(dbOrder){
+export const updateOrder = async (order: IOrder) => {
+    const dbOrder = await getOrderById(order.id);
+    if (dbOrder) {
         const dbStatus: OrderStatus = dbOrder.status.toString() as OrderStatus;
 
-        const dbOrderItem = await getOrderItemsByOrder(dbOrder);
-
-        const updatedOrder: IOrder = {
+        const updatedOrder = {
             ...dbOrder,
-            status: newOrder.status ? newOrder.status : dbStatus,
+            status: order.status ? order.status : dbStatus,
         }
 
         return prisma.order.update({
@@ -56,25 +66,25 @@ export const updateOrder = async (oldOrder: IOrder, newOrder: IOrder) => {
             data: {
                 status: updatedOrder.status,
                 orderItem: {
-                    connect: newOrder.orderItem?.map(item => ({id: item.id}))
+                    deleteMany: {},
                 }
             }
         })
     }
+
+    return null;
 }
 
 export const deleteOrder = async (orderId: number) => {
     const dbOrder = await getOrderById(orderId);
-    if(dbOrder) {
+    if (dbOrder) {
         await prisma.order.update({
             where: {
                 id: orderId
             },
             data: {
                 orderItem: {
-                    deleteMany: {
-                        orderId: orderId
-                    }
+                    deleteMany: {}
                 }
             }
         })
